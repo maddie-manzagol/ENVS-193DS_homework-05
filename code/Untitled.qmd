@@ -30,11 +30,11 @@ library(GGally)
 
 Read in the csv file
 ```{r read-in-data}
-plant <- read_csv(here("data","knb-lter-hfr.109.18(1)", "hf109-01-sarracenia.csv")) %>% 
+plant <- read_csv(here("data","knb-lter-hfr.109.18 (1)", "hf109-01-sarracenia.csv")) %>% 
   #make the column names clear
   clean_names() %>% 
   #selecting the columns of interest
-  select(totmass, species, feedlevel, sla, chlorphyll, amass, num_lvs, num_phylls)
+  select(totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls)
 ```
 
 Visulatize the missing data: 
@@ -55,13 +55,13 @@ Create a correlation plot:
 #calculate pearson's r only for numerical values only
 plant_cor <- plant_subset %>% 
   select(feedlevel:num_phylls) %>% 
-  cor(methods = "pearson")
+  cor(method = "pearson")
 
 #creating a correlation plot
 corrplot(plant_cor,
          #change the shape of what's in the cells
          #point to the left=negative relationship, right=positive relationship
-         method = "elipse",
+         method = "ellipse",
          #adds the correlation values in black over the elipses
          addCoef.col= "black")
 ```
