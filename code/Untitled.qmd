@@ -1,0 +1,106 @@
+---
+title: "code for HW 5"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    code-fold: true
+    theme: yeti 
+execute:
+  message: false
+  warning: false
+---
+Read in packages
+```{r libraries}
+# should haves (from last week)
+library(tidyverse)
+library(here)
+library(janitor)
+library(ggeffects)
+library(performance)
+library(naniar) # or equivalent
+library(flextable) # or equivalent
+library(car)
+library(broom)
+# would be nice to have
+library(corrplot)
+library(AICcmodavg)
+library(GGally)
+```
+
+Read in the csv file
+```{r read-in-data}
+plant <- read_csv(here("data","knb-lter-hfr.109.18(1)", "hf109-01-sarracenia.csv")) %>% 
+  #make the column names clear
+  clean_names() %>% 
+  #selecting the columns of interest
+  select(totmass, species, feedlevel, sla, chlorphyll, amass, num_lvs, num_phylls)
+```
+
+Visulatize the missing data: 
+```{r missing-data-visualization}
+gg_miss_var(plant)
+```
+
+Subsetting the data by dropping NAs:
+```{r subset-drop-NA}
+plant_subset <- plant %>% 
+  drop_na(sla, chlorophyll, amass, num_lvs, num_phylls)
+```
+
+Create a correlation plot: 
+
+(example writting) To determine the relationship between numerical variables in our dataset, we calculcated pearson's r and visually represented the correlation using a correlation plot
+```{r correlation-plot}
+#calculate pearson's r only for numerical values only
+plant_cor <- plant_subset %>% 
+  select(feedlevel:num_phylls) %>% 
+  cor(methods = "pearson")
+
+#creating a correlation plot
+corrplot(plant_cor,
+         #change the shape of what's in the cells
+         #point to the left=negative relationship, right=positive relationship
+         method = "elipse",
+         #adds the correlation values in black over the elipses
+         addCoef.col= "black")
+```
+
+Create a plot of each variable compared against the others 
+```{r pair-plot}
+plant_subset %>% 
+  select(species:num_phylls) %>% 
+  ggpairs()
+```
+
+Starting Regression here: 
+
+(example) To determine how species and physiological characteristics perditc biomass, we fit multiple linear models 
+```{r null-and-full-models}
+null <- lm(totmass ~ 1, data= plant_subset)
+full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data= plant_subset)
+```
+
+We visually assesed normaility and homoskedascitity using diagnostic plots for the full model: (normal, but not homoskedastic because its not entirely random)
+```{r full-diagnoistics}
+par(mfrow = c(2,2))
+plot(full)
+```
+
+We also tested for normality using the Shaprio-Wilk test (null hypothesis= variable of interest (ie the residuals) are normally distributed) and homoskedasticity using the Breusch-Pagan test (null hypothesis= variable of interest (ie the residuals) has constant variance)
+```{r}
+check_normality(full)
+check_heteroscedasticity(full)
+```
+
+Log transformation: manipulates data to achieve normality 
+```{r}
+full_log <- lm(log(totmass)~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data= plant_subset)
+
+plot(full_log)
+check_normality(full_log)
+check_heteroscedasticity(full_log)
+```
+
+
+
