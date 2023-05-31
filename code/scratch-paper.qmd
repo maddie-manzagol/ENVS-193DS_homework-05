@@ -94,7 +94,8 @@ check_heteroscedasticity(full)
 ```
 
 Log transformation: manipulates data to achieve normality 
-```{r}
+```{r log transformation}
+null_log <- lm(log(totmass)~1, data = plant_subset)
 full_log <- lm(log(totmass)~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data= plant_subset)
 
 plot(full_log)
@@ -102,5 +103,80 @@ check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
+evaluate multicollinearity: 
+We evaluated muticollinarity by calculating the gerneralized variance inflation factor and determined that this model didn't display any multicolinearity because no values were larger than 5 
+```{r calculate-vif}
+#from the car package
+car::vif(full_log)
+```
+ 
+try some more models : addressing the question: what set of predictor variables best explains the response? 
+```{r}
+model2_log <- lm(log(totmass)~ species, data= plant_subset)
+```
+
+check assumptions for model 2:
+```{r assumptions}
+plot(model2_log)
+
+check_normality(model2_log)
+
+check_heteroscedasticity(model2_log)
+```
+
+compare models using Akaike's Information criterion (AIC) values: 
+```{r AIC-value}
+AICc(full_log)
+AICc(model2_log)
+AICc(null_log)
+
+MuMIn::AICc(full_log, model2_log, null_log)
+MuMIn::model.sel(full_log, model2_log, null_log)
+```
+
+we compared models using AIC and chose the model with the lowest value, which was full_log model 
+
+#Results 
+
+We found that the ____ model including ____, _____, _____ predictors best predicted ______ (model summary) 
+```{r}
+summary(full_log)
+```
+
+use ggpredict() to back transform estimates 
+```{r}
+model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
+
+plot(model_pred, add.data = TRUE)
+
+plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE), add.data = TRUE)
+
+plot(ggpredict(full_log, terms = "feedlevel", back.transform = TRUE), add.data = TRUE)
+#we didn't like this one^
+
+plot(ggpredict(full_log, terms = "sla", back.transform = TRUE), add.data = TRUE)
+
+model_pred
+```
+
+you chose the plot that best displays the data in your own opinion---your report so you chose 
+```{r}
+#this was already done above
+summary(full_log)
+
+table <- tidy(full_log, conf.int = TRUE) %>% 
+  #change the pvalue numbers if they are really small
+  #chnage the estimates, standard error, and t-statistics to round to ___ digits
+  #using mutate 
+  #make it into a flex table 
+  flextable() %>% 
+  # fit it to the viewer 
+  autofit()
+  
+
+table
+```
+
+#different types of ANOVA (tables)
 
 
