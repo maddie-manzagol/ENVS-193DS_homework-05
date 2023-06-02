@@ -10,6 +10,17 @@ execute:
   message: false
   warning: false
 ---
+#Methods Section 
+
+a. Sampling Methods (these should be summarized from the metadata and cited)
+
+120 Sarracenia plants ranging from small, intermediate, and large species size were used for the study were collected from the sampling site: Harvard Forest Greenhouse (meta data). To conduct the study, plants were fed once a week for 7 weeks straight (meta data). Two plants of each Sarracenia species were assigned to one of six feeding levels in a regression design ranging from 0 - 0.25g of finely ground wasps per feeding (for small species), 0 - 0.5g (for species of intermediate sizes), and 0 - 1.0g (for large species) (meta data). "Aboveground size" and "Amass" were measured prior to commencing treatments, meanwhile all other parameters were measured during the duration of the study (meta data).
+
+b. Description of data organization and processing (1-3 sentences)
+
+In order to organize the data after reading in the necessary packages, it is important to see what data was measured. To do so, the full data set was read in using the read_csv and the here function, then to make the names of the objects within the data set more clear and too only include the objects of interest the clean_names and select functions were applied. The data set now appears readable with the data set reporting values observed for totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls
+
+
 Read in packages
 ```{r libraries}
 # should haves (from last week)
@@ -41,6 +52,10 @@ Visulatize the missing data:
 ```{r missing-data-visualization}
 gg_miss_var(plant)
 ```
+
+Visualization of missing observations with an accompanying caption and discussion
+(caption: 1-3 sentences, discussion: 1-3 sentences)
+
 
 Subsetting the data by dropping NAs:
 ```{r subset-drop-NA}
