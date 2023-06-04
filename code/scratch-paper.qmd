@@ -18,7 +18,7 @@ a. Sampling Methods (these should be summarized from the metadata and cited)
 
 b. Description of data organization and processing (1-3 sentences)
 
-In order to organize the data after reading in the necessary packages, it is important to see what data was measured. To do so, the full data set was read in using the read_csv and the here function, then to make the names of the objects within the data set more clear and too only include the objects of interest the clean_names and select functions were applied. The data set now appears readable with the data set reporting values observed for totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls
+In order to organize the data after reading in the necessary packages, it is important to see what data was measured. To do so, the full data set was read in using the read_csv and the here function, then to make the names of the objects within the data set more clear and too only include the objects of interest the clean_names and select functions were applied. The data set now appears readable with the data set only reporting values observed for totmass, species, feedlevel, sla, chlorophyll, amass, num_lvs, num_phylls
 
 
 Read in packages
@@ -53,8 +53,15 @@ Visulatize the missing data:
 gg_miss_var(plant)
 ```
 
-Visualization of missing observations with an accompanying caption and discussion
+c. Visualization of missing observations with an accompanying caption and discussion
 (caption: 1-3 sentences, discussion: 1-3 sentences)
+
+Caption: The gg_miss_var function highlights missing data within the "plant" data set. The plot highlights missing data in the chlorophyll, amass, sla, num_phylls, and num_lvs columns meaning that the only parameters without missing data includes totmass, species, and feedlevel. 
+
+Discussion: Given that there are many missing data throughout multiple parameters, it is important to identify where the missing data is so that one can identify where bias within statistical analysis might interfere with results. 
+
+fix this^
+
 
 
 Subsetting the data by dropping NAs:
@@ -65,7 +72,12 @@ plant_subset <- plant %>%
 
 Create a correlation plot: 
 
-(example writting) To determine the relationship between numerical variables in our dataset, we calculcated pearson's r and visually represented the correlation using a correlation plot
+d. Visualization of Pearson’s correlation between variables with an accompanying
+caption and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)
+
+Caption: To determine the relationship between numerical variables in our dataset, we calculcated pearson's r and visually represented the correlation using a correlation plot. We compared the variables feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls. 
+
+Discussion: After calculating pearson's r for the different variables within the plant_subset data frame, it was determined that none of the variables have a super strong linear association as the highest correlation value (r) was between amass and sla (0.32). The correlations between sla and feedlevel (-0.3), chlorophyll and sla (-0.22), num_lvs and feedlevel (-0.07), num_phylls and sla (-0.3), and num_phylls and chlorophyll (-0.24) are all negatively correlated; meanwhile, the correlations between chlorophyll and feedlevel (0.16), amass and feedlevel (0.13), num_phylls and feedlevel (0.25), sla and amass (0.32), and sla and num_lvs (0.09) are all postively correlated. It is also worthy to note that there was no correlation between amass and num_phylls (0). 
 ```{r correlation-plot}
 #calculate pearson's r only for numerical values only
 plant_cor <- plant_subset %>% 
@@ -81,6 +93,14 @@ corrplot(plant_cor,
          addCoef.col= "black")
 ```
 
+e. Visualization of relationships between variables (not correlation) with an
+accompanying caption and discussion (caption: 1-3 sentences, discussion: 1-3
+sentences)
+
+Caption: In order to visualize the relationship between the variables the ggpairs function was applied. The ggpairs function builds a scatterplot matrix that displays scatterplots of each pair of numeric values, while also displaying pearson's r on the right and the variable distribution on the diagonal. 
+
+Discussion: After visualizing the relationships between each pair of variables, the ggpair function reveals the different relationships between different varibales depending on the type of data each variable is. Box plots are used to represent relationships between species, categorical data, and the rest of the variables, continuous or discrete. The scatter plots and line graphs highlight relationships between continuous and discrete data.
+
 Create a plot of each variable compared against the others 
 ```{r pair-plot}
 plant_subset %>% 
@@ -89,24 +109,33 @@ plant_subset %>%
 ```
 
 Starting Regression here: 
+f. Creating the null and full model with accompanying discussion (1-3 sentences)
 
-(example) To determine how species and physiological characteristics perditc biomass, we fit multiple linear models 
+To determine how species and physiological characteristics perditc biomass, we fit multiple linear models. The null model creates a regression model that assumes no realtionship between totmass and the predictor variables. On the other hand, the full model creates a regression model that assumes a relationship between totmass and the predictor variables in order to predict biomass.
+
 ```{r null-and-full-models}
 null <- lm(totmass ~ 1, data= plant_subset)
 full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data= plant_subset)
 ```
 
-We visually assesed normaility and homoskedascitity using diagnostic plots for the full model: (normal, but not homoskedastic because its not entirely random)
+g. Visual and statistical assumption checks for the full model with accompanying
+discussion (1-3 sentences)
+
+We visually assesed normaility and homoskedascitity using diagnostic plots for the full model and found that the data is appears normal, but not homoskedastic because the data is not scattered entirely random. We also tested for normality using the Shaprio-Wilk test and found non-normality of residuals. We then retested for homoscedasticity using the Breusch-Pagan test and detected non-constant error variance meaning the data is heteroscedastic.
 ```{r full-diagnoistics}
 par(mfrow = c(2,2))
 plot(full)
 ```
 
-We also tested for normality using the Shaprio-Wilk test (null hypothesis= variable of interest (ie the residuals) are normally distributed) and homoskedasticity using the Breusch-Pagan test (null hypothesis= variable of interest (ie the residuals) has constant variance)
+
 ```{r}
 check_normality(full)
 check_heteroscedasticity(full)
 ```
+
+h. Explanation of any transformation and justification (1-3 sentences) 
+
+After visually assesing normaility and homoscedascitity using diagnostic plots for the full model, we found that the data appeared to be non-normal and heteroscedasitic. In order to reduce the skewness of variable of interest, we applied a log transformation. Once we did this we were able to manipulate the residuals in a manner that reported normal distribution and homoscedastic variance. 
 
 Log transformation: manipulates data to achieve normality 
 ```{r log transformation}
@@ -118,14 +147,25 @@ check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
-evaluate multicollinearity: 
-We evaluated muticollinarity by calculating the gerneralized variance inflation factor and determined that this model didn't display any multicolinearity because no values were larger than 5 
+(i before j in this because of the way the code was typed out)
+
+j. Variance inflation factor check for the full model with accompanying discussion
+(discussion: 1-3 sentences)
+
+We evaluated muticollinarity by calculating the generalized variance inflation factor and determined that this model didn't display any multicollinearity because no values were larger than 5. 
+
 ```{r calculate-vif}
 #from the car package
 car::vif(full_log)
 ```
  
+ 
+i. Model construction with visual and statistical assumption checks for three additional models with justification (i.e. why did you choose those predictor variables?) (justification: 1-3 sentences per model)
+
+To address the question, what set of predictor variables best explains the response, we applied three more linear models using the predictor variables species, feedlevel, and num_lvs. The model comparing species as predictor variable and totmass as the response variable was found to be normal and homoscedastic. The models comparing feedlevel and num_lvs to predict totmass, respectively, both were found to be non-normal, yet homoscedastic. We chose these three variables because species, feed level, and leaf number could all potentially impact the total mass of individual plants due how species variation, amount of nutrients, and increased/decreased leaf coverage aids biomass.
+
 try some more models : addressing the question: what set of predictor variables best explains the response? 
+Model with predictor variable: species
 ```{r}
 model2_log <- lm(log(totmass)~ species, data= plant_subset)
 ```
@@ -139,21 +179,52 @@ check_normality(model2_log)
 check_heteroscedasticity(model2_log)
 ```
 
+
+Model with predictor variable: feedlevel
+```{r}
+model3_log <- lm(log(totmass)~ feedlevel, data = plant_subset)
+```
+check assumptions for model 3:
+```{r}
+plot(model3_log)
+
+check_normality(model3_log)
+check_heteroscedasticity(model3_log)
+```
+
+
+Model with predictor variable: num_lvs
+```{r}
+model4_log <- lm(log(totmass)~ num_lvs, data = plant_subset)
+```
+check assumptions for model 4:
+```{r}
+plot(model4_log)
+
+check_normality(model4_log)
+check_heteroscedasticity(model4_log)
+```
+
+k. Model comparison using the null model, full model, and additional models from part
+7g
+
 compare models using Akaike's Information criterion (AIC) values: 
 ```{r AIC-value}
 AICc(full_log)
 AICc(model2_log)
+AICc(model3_log)
+AICc(model4_log)
 AICc(null_log)
 
-MuMIn::AICc(full_log, model2_log, null_log)
-MuMIn::model.sel(full_log, model2_log, null_log)
+MuMIn::AICc(full_log, model2_log, model3_log, model4_log, null_log)
+MuMIn::model.sel(full_log, model2_log, model3_log, model4_log, null_log)
 ```
 
-we compared models using AIC and chose the model with the lowest value, which was full_log model 
+We compared models using AIC and chose the model with the lowest value, which was full_log model.  
 
 #Results 
 
-We found that the ____ model including ____, _____, _____ predictors best predicted ______ (model summary) 
+We found that the full_log model including species, feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls predictors best predicted totmass. 
 ```{r}
 summary(full_log)
 ```
