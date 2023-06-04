@@ -10,6 +10,10 @@ execute:
   message: false
   warning: false
 ---
+#Introduction 
+
+Sarracenia, commonly known as pitcher plants, are carnivorous wetland flora native to North America that thrive in sunny, wet, nutrient-poor habitats (Horner). Sarracenia may be of interest to people because their predation strategies can have indirect as well as direct impacts on the population dynamics and community structure of freshwater plankton and bacterial communities due to their interactions at higher trophic levels which control bacterial densities and community structure (Cochran-Stafira). Sarracenia may also be of interest to people because their carnivorous behavior causes them to not follow the 'world-wide leaf economics spectrum' which is defined as an allometric relationship between nutrients, maximal net photosynthetic rates, and physiology (notably leaf size) (Farnsworth and Ellison). The reason their leaf traits diverge from the leaf economics spectrum is due to the fact that carnivorous plants derive most of their nutrients from capturing and digesting prey, implying low photosynthetic rates and low photosynthetic nitrogen and phosphorous use efficiencies (Farnsworth and Ellison). Since prey capture is their main source of nutrient uptake, prey capture is known to be indicative of their fitness in the sense that increased prey capture aids in survival, growth, and reproduction (Horner). Due to the impact on the individual fitness of Sarracenia plants, it is important to understand how Sarracenia traits aid in prey capture as well as how Sarracenia react to changes in the abundance of prey (Horner). Additionally, it is valuable to predict individual biomass of Sarracenia based on morphological, physiological, or taxonomic characteristics because the prediction models offer insight into their growth patterns, resource allocation, and ecological roles, potentially shedding light on larger ecological processes, as well as, how humans can adopt effective management practices. This study investigates the effects of prey availability on photosynthetic rate (Amass), chlorophyll fluorescence, growth, architecture, and foliar nutrient and chlorophyll content of ten pitcher plant (Sarracenia) species. The study questions how prey availability impacts Sarracenia growth and health, as well as, if morphological and physiological allometric relationships of Sarracenia resemble allometric relationships of non-carnivorous plants when nutrients are not a limiting resource. These questions formulated the hypothesis that increased prey availability would stimulate Amass, increase photosynthetic N- and P-use efficiencies, increase relative biomass allocation to photosynthetically efficient, non-predatory phyllodes rather than pitchers, and thereby increase overall plant biomass and reduce stress-related chlorophyll fluorescence.
+
 #Methods Section 
 
 a. Sampling Methods (these should be summarized from the metadata and cited)
@@ -147,18 +151,6 @@ check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
-(i before j in this because of the way the code was typed out)
-
-j. Variance inflation factor check for the full model with accompanying discussion
-(discussion: 1-3 sentences)
-
-We evaluated muticollinarity by calculating the generalized variance inflation factor and determined that this model didn't display any multicollinearity because no values were larger than 5. 
-
-```{r calculate-vif}
-#from the car package
-car::vif(full_log)
-```
- 
  
 i. Model construction with visual and statistical assumption checks for three additional models with justification (i.e. why did you choose those predictor variables?) (justification: 1-3 sentences per model)
 
@@ -205,6 +197,17 @@ check_normality(model4_log)
 check_heteroscedasticity(model4_log)
 ```
 
+j. Variance inflation factor check for the full model with accompanying discussion
+(discussion: 1-3 sentences)
+
+We evaluated muticollinarity by calculating the generalized variance inflation factor and determined that this model didn't display any multicollinearity because no values were larger than 5. 
+
+```{r calculate-vif}
+#from the car package
+car::vif(full_log)
+```
+
+
 k. Model comparison using the null model, full model, and additional models from part
 7g
 
@@ -224,9 +227,19 @@ We compared models using AIC and chose the model with the lowest value, which wa
 
 #Results 
 
-We found that the full_log model including species, feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls predictors best predicted totmass. 
+a. We found that the full_log model including species, feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls predictors best predicted totmass. We picked this model because the full_log model yields the lowest AIC value indicating that this model has the best predictive capacity while remaining as simple as possible. The full_log model indicates that 
+
+b. 
+
+c. is the predicitor variable of your choice the same as the model chosen for parts a and b? 
+After using the ggpredicts function to predict biomass from the predictor variable num_lvs, we found that as the number of leaves increases so does the biomass. This indicated a positive correlation between the predictor variable, num_lvs, and the resultant variable, totmass. 
+
+d. is this in terms of c? 
+Biologically, this implies that the more leaves a pitcher plant is able to grow is indicative of how much biomass will pertain to one individual. This makes sense because as a plant gains more leaves, there will be more biomass comparatively to the plant before it had the additional leaves.
+
 ```{r}
 summary(full_log)
+tidy(full_log, conf.int = TRUE, conf.level = 0.95)
 ```
 
 use ggpredict() to back transform estimates 
@@ -237,8 +250,8 @@ plot(model_pred, add.data = TRUE)
 
 plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE), add.data = TRUE)
 
-plot(ggpredict(full_log, terms = "feedlevel", back.transform = TRUE), add.data = TRUE)
-#we didn't like this one^
+plot(ggpredict(full_log, terms = "num_lvs", back.transform = TRUE), add.data = TRUE)
+#we have chosen this one
 
 plot(ggpredict(full_log, terms = "sla", back.transform = TRUE), add.data = TRUE)
 
@@ -263,6 +276,12 @@ table <- tidy(full_log, conf.int = TRUE) %>%
 table
 ```
 
-#different types of ANOVA (tables)
 
+Works Cited
+
+Cochran-Stafira, D.L. and von Ende, C.N. (1998), INTEGRATING BACTERIA INTO FOOD WEBS: STUDIES WITH SARRACENIA PURPUREA INQUILINES. Ecology, 79: 880-898. https://doi.org/10.1890/0012-9658(1998)079[0880:IBIFWS]2.0.CO;2
+
+Farnsworth, Elizabeth J., and Aaron M. Ellison. “Prey Availability Directly Affects Physiology, Growth, Nutrient Allocation and Scaling Relationships among Leaf Traits in 10 Carnivorous Plant Species.” Journal of Ecology, Vol. 0, No. 0, 2007, https://doi.org/10.1111/j.1365-2745.2007.01313.x 
+
+Horner, John D., Steele, Cross J., Underwood, Christopher A., Lingamfelter, Daniel. "Age-Related Changes in Characteristics and Prey Capture of Seasonal Cohorts of Sarracenia alata Pitchers." The American Midland Naturalist, Vol. 167, No. 1, 2012, https://doi.org/10.1674/0003-0031-167.1.13 
 
