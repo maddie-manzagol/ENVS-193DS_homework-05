@@ -227,35 +227,27 @@ We compared models using AIC and chose the model with the lowest value, which wa
 
 #Results 
 
-a. We found that the full_log model including species, feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls predictors best predicted totmass. We picked this model because the full_log model yields the lowest AIC value indicating that this model has the best predictive capacity while remaining as simple as possible. The full_log model indicates that 
+a. We found that the full_log model including species, feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls predictors best predicted totmass because the full_log model yields the lowest AIC value indicating that this model has the best predictive capacity while remaining as simple as possible. Overall, the full_log model was statistically significant (R^2= 0.8687, F(15, 87)= 38.38, p<0.001).  
 
-b. 
+b. With all else held constant, the full_log model indicates a significant relationship between totmass and num_lvs (p< 0.001). Comparing to the alabamensis species of pitcher plants, the leucophylla species are likely to have a biomass that is 1.7 higher (95% confidence level, [1.25, 2.16]) and the psittacina species are likely to have a biomass that is 1.6 lower (95% confidence level, [-2.05,-1.23]). However it was found that some of the predictors such as, the jonesii and purpurea species, amass, and num_phylls, did not significantly predict totmass (p= 0.107, p= 0.155, p= 0.436, p= 0.446, respectively).
 
-c. is the predicitor variable of your choice the same as the model chosen for parts a and b? 
-After using the ggpredicts function to predict biomass from the predictor variable num_lvs, we found that as the number of leaves increases so does the biomass. This indicated a positive correlation between the predictor variable, num_lvs, and the resultant variable, totmass. 
-
-d. is this in terms of c? 
-Biologically, this implies that the more leaves a pitcher plant is able to grow is indicative of how much biomass will pertain to one individual. This makes sense because as a plant gains more leaves, there will be more biomass comparatively to the plant before it had the additional leaves.
 
 ```{r}
 summary(full_log)
 tidy(full_log, conf.int = TRUE, conf.level = 0.95)
 ```
 
-use ggpredict() to back transform estimates 
+ 
 ```{r}
-model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
+#use ggpredict() to back transform estimates and save it as an object called "model_pred"
+model_pred <- ggpredict(full_log, terms = "num_lvs", back.transform = TRUE)
 
+#plot "model_pred" object 
 plot(model_pred, add.data = TRUE)
 
-plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE), add.data = TRUE)
-
+#does the same thing as above, but different code style 
 plot(ggpredict(full_log, terms = "num_lvs", back.transform = TRUE), add.data = TRUE)
-#we have chosen this one
 
-plot(ggpredict(full_log, terms = "sla", back.transform = TRUE), add.data = TRUE)
-
-model_pred
 ```
 
 you chose the plot that best displays the data in your own opinion---your report so you chose 
@@ -264,11 +256,21 @@ you chose the plot that best displays the data in your own opinion---your report
 summary(full_log)
 
 table <- tidy(full_log, conf.int = TRUE) %>% 
-  #change the pvalue numbers if they are really small
-  #chnage the estimates, standard error, and t-statistics to round to ___ digits
-  #using mutate 
+    #using mutate to change the pvalue numbers if they are really small
+  #using mutate to chnage the estimates, standard error, and t-statistics to round to 4 digits
+  mutate(across(estimate:conf.high,~round(.x,digits=4))) %>% 
+  mutate(statistic=round(statistic, digits = 1)) %>% 
+  mutate(p.value=case_when(p.value<0.001~"<0.001")) %>%
+  #fix this
   #make it into a flex table 
   flextable() %>% 
+  set_header_labels(term="Term",
+                    estimate="Estimate",
+                    std.error="Standard Error",
+                    statistic="Statistic",
+                    p.value="p-value",
+                    conf.low="Lower Confidence Level",
+                    conf.high="High Confidence Level") %>% 
   # fit it to the viewer 
   autofit()
   
