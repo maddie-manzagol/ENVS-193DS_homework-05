@@ -1,5 +1,7 @@
 ---
-title: "code for HW 5"
+title: "Code for HW 5"
+author: Maddie Manzagol 
+date: June 6, 2023 
 format: 
   html:
     toc: true
@@ -322,7 +324,7 @@ check_heteroscedasticity(model4_log)
 ```
 
 j.  Variance inflation factor check for the full model with accompanying
-    discussion (discussion: 1-3 sentences)
+    discussion 
 
 We evaluated muticollinarity by calculating the generalized variance
 inflation factor and determined that this model didn't display any
