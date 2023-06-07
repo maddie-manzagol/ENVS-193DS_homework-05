@@ -15,6 +15,9 @@ editor_options:
   markdown: 
     wrap: 72
 ---
+# Link to Github
+
+[github](https://github.com/maddie-manzagol/ENVS-193DS_homework-05.git)
 
 # Introduction
 
@@ -108,6 +111,7 @@ library(GGally)
 Read in the csv file
 
 ```{r read-in-data}
+#read in the data
 plant <- read_csv(here("data","knb-lter-hfr.109.18 (1)", "hf109-01-sarracenia.csv")) %>% 
   #make the column names clear
   clean_names() %>% 
@@ -124,6 +128,7 @@ that one can identify where bias potentially is within statistical
 analysis as it might interfere with results.
 
 ```{r missing-data-visualization}
+#visualize the missing data
 gg_miss_var(plant)
 ```
 
@@ -136,6 +141,7 @@ feedlevel.
 Subsetting the data by dropping NAs:
 
 ```{r subset-drop-NA}
+#new data set with dropped NA values
 plant_subset <- plant %>% 
   drop_na(sla, chlorophyll, amass, num_lvs, num_phylls)
 ```
@@ -192,6 +198,7 @@ continuous and discrete data.
 Create a plot of each variable compared against the others
 
 ```{r pair-plot}
+#visualize the relationships between variables, not correlation 
 plant_subset %>% 
   select(species:num_phylls) %>% 
   ggpairs()
@@ -215,6 +222,7 @@ regression model that assumes a relationship between totmass and the
 predictor variables in order to predict biomass.
 
 ```{r null-and-full-models}
+#create linear regression models for null and full model
 null <- lm(totmass ~ 1, data= plant_subset)
 full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data= plant_subset)
 ```
@@ -231,11 +239,13 @@ the Breusch-Pagan test and detected non-constant error variance meaning
 the data is heteroscedastic.
 
 ```{r full-diagnoistics}
+#check diagnostics
 par(mfrow = c(2,2))
 plot(full)
 ```
 
 ```{r}
+#check assumptions
 check_normality(full)
 check_heteroscedasticity(full)
 ```
@@ -251,9 +261,11 @@ residuals in a manner that reported normal distribution and
 homoscedastic variance.
 
 ```{r log transformation}
+#create linear regression models for log transformation of null and full model
 null_log <- lm(log(totmass)~1, data = plant_subset)
 full_log <- lm(log(totmass)~ species + feedlevel + sla + chlorophyll + amass + num_lvs + num_phylls, data= plant_subset)
 
+#plot and check assumptions 
 plot(full_log)
 check_normality(full_log)
 check_heteroscedasticity(full_log)
@@ -280,28 +292,31 @@ were found to be non-normal, yet homoscedastic.
 Model with predictor variable: species
 
 ```{r}
+#New linear regression model with species are predictor
 model2_log <- lm(log(totmass)~ species, data= plant_subset)
 ```
 
 check assumptions for model 2:
 
 ```{r assumptions}
+#plot the model and check for normality and heteroscedasticity
 plot(model2_log)
 
 check_normality(model2_log)
-
 check_heteroscedasticity(model2_log)
 ```
 
 Model with predictor variable: feedlevel
 
 ```{r}
+#New linear regression model with feedlevel are predictor
 model3_log <- lm(log(totmass)~ feedlevel, data = plant_subset)
 ```
 
 check assumptions for model 3:
 
 ```{r}
+#plot the model and check for normality and heteroscedasticity
 plot(model3_log)
 
 check_normality(model3_log)
@@ -311,12 +326,14 @@ check_heteroscedasticity(model3_log)
 Model with predictor variable: num_lvs
 
 ```{r}
+#New linear regression model with num_lvs are predictor
 model4_log <- lm(log(totmass)~ num_lvs, data = plant_subset)
 ```
 
 check assumptions for model 4:
 
 ```{r}
+#plot the model and check for normality and heteroscedasticity
 plot(model4_log)
 
 check_normality(model4_log)
@@ -341,12 +358,14 @@ k.  Model comparison using the null model, full model, and additional
 compare models using Akaike's Information criterion (AIC) values:
 
 ```{r AIC-value}
+#generate AIC values
 AICc(full_log)
 AICc(model2_log)
 AICc(model3_log)
 AICc(model4_log)
 AICc(null_log)
 
+#rank AIC values
 MuMIn::AICc(full_log, model2_log, model3_log, model4_log, null_log)
 MuMIn::model.sel(full_log, model2_log, model3_log, model4_log, null_log)
 ```
@@ -380,6 +399,7 @@ pitchers and phyllodes will predictably accumulate more biomass than
 individuals who produce less pitches and phyllodes.
 
 ```{r}
+#create a summary table with summary statistics
 summary(full_log)
 tidy(full_log, conf.int = TRUE, conf.level = 0.95)
 ```
@@ -390,9 +410,6 @@ model_pred <- ggpredict(full_log, terms = "num_lvs", back.transform = TRUE)
 
 #plot "model_pred" object 
 plot(model_pred, add.data = TRUE)
-
-#does the same thing as above, but different code style 
-plot(ggpredict(full_log, terms = "num_lvs", back.transform = TRUE), add.data = TRUE)
 
 ```
 
@@ -432,23 +449,23 @@ table
 Cochran-Stafira, D.L. and von Ende, C.N. (1998), INTEGRATING BACTERIA
 INTO FOOD WEBS: STUDIES WITH SARRACENIA PURPUREA INQUILINES. Ecology,
 79: 880-898.
-https://doi.org/10.1890/0012-9658(1998)079\[0880:IBIFWS\]2.0.CO;2
+[doi](https://doi.org/10.1890/0012-9658(1998)079\[0880:IBIFWS\]2.0.CO;2)
 (Accessed 2023-06-04).
 
 Ellison, A. and E. Farnsworth. 2021. Effects of Prey Availability on
 Sarracenia Physiology at Harvard Forest 2005 ver 18. Environmental Data
 Initiative.
-https://doi.org/10.6073/pasta/26b22d09279e62fd729ffc35f9ef0174 (Accessed
+[doi](https://doi.org/10.6073/pasta/26b22d09279e62fd729ffc35f9ef0174) (Accessed
 2023-06-04).
 
 Farnsworth, Elizabeth J., and Aaron M. Ellison. "Prey Availability
 Directly Affects Physiology, Growth, Nutrient Allocation and Scaling
 Relationships among Leaf Traits in 10 Carnivorous Plant Species."
 Journal of Ecology, Vol. 0, No. 0, 2007,
-https://doi.org/10.1111/j.1365-2745.2007.01313.x (Accessed 2023-06-04).
+[doi](https://doi.org/10.1111/j.1365-2745.2007.01313.x) (Accessed 2023-06-04).
 
 Horner, John D., Steele, Cross J., Underwood, Christopher A.,
 Lingamfelter, Daniel. "Age-Related Changes in Characteristics and Prey
 Capture of Seasonal Cohorts of Sarracenia alata Pitchers." The American
 Midland Naturalist, Vol. 167, No. 1, 2012,
-https://doi.org/10.1674/0003-0031-167.1.13 (Accessed 2023-06-04).
+[doi](https://doi.org/10.1674/0003-0031-167.1.13) (Accessed 2023-06-04).
