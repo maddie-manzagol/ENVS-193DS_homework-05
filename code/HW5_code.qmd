@@ -14,7 +14,7 @@ editor_options:
     wrap: 72
 ---
 
-#Introduction
+# Introduction
 
 Sarracenia, commonly known as pitcher plants, are carnivorous wetland
 flora native to North America that thrive in sunny, wet, nutrient-poor
@@ -57,23 +57,23 @@ biomass allocation to photosynthetically efficient, non-predatory
 phyllodes rather than pitchers, and thereby increase overall plant
 biomass and reduce stress-related chlorophyll fluorescence.
 
-#Methods Section
+# Methods
 
-a.  Sampling Methods (these should be summarized from the metadata and
-    cited)
+a.  Sampling Methods
 
 120 Sarracenia plants ranging from small, intermediate, and large
 species size were used for the study were collected from the sampling
-site: Harvard Forest Greenhouse (Ellison and Farnsworth). To conduct the study,
-plants were fed once a week for 7 weeks straight (Ellison and Farnsworth). Two plants
-of each Sarracenia species were assigned to one of six feeding levels in
-a regression design ranging from 0 - 0.25g of finely ground wasps per
-feeding (for small species), 0 - 0.5g (for species of intermediate
-sizes), and 0 - 1.0g (for large species) (Ellison and Farnsworth). "Aboveground size"
-and "Amass" were measured prior to commencing treatments, meanwhile all
-other parameters were measured during the duration of the study (Ellison and Farnsworth).
+site: Harvard Forest Greenhouse (Ellison and Farnsworth). To conduct the
+study, plants were fed once a week for 7 weeks straight (Ellison and
+Farnsworth). Two plants of each Sarracenia species were assigned to one
+of six feeding levels in a regression design ranging from 0 - 0.25g of
+finely ground wasps per feeding (for small species), 0 - 0.5g (for
+species of intermediate sizes), and 0 - 1.0g (for large species)
+(Ellison and Farnsworth). "Aboveground size" and "Amass" were measured
+prior to commencing treatments, meanwhile all other parameters were
+measured during the duration of the study (Ellison and Farnsworth).
 
-b.  Description of data organization and processing (1-3 sentences)
+b.  Description of data organization and processing
 
 In order to organize the data after reading in the necessary packages,
 it is important to see what data was measured. To do so, the full data
@@ -114,12 +114,12 @@ plant <- read_csv(here("data","knb-lter-hfr.109.18 (1)", "hf109-01-sarracenia.cs
 ```
 
 c.  Visualization of missing observations with an accompanying caption
-    and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)
+    and discussion
 
 Discussion: Given that there are many missing data throughout multiple
 parameters, it is important to identify where the missing data is so
-that one can identify where bias within statistical analysis might
-interfere with results.
+that one can identify where bias potentially is within statistical
+analysis as it might interfere with results.
 
 ```{r missing-data-visualization}
 gg_miss_var(plant)
@@ -141,8 +141,7 @@ plant_subset <- plant %>%
 Create a correlation plot:
 
 d.  Visualization of Pearson's correlation between variables with an
-    accompanying caption and discussion (caption: 1-3 sentences,
-    discussion: 1-3 sentences)
+    accompanying caption and discussion
 
 Discussion: After calculating pearson's r for the different variables
 within the plant_subset data frame, it was determined that none of the
@@ -178,8 +177,7 @@ correlation using a correlation plot. We compared the variables
 feedlevel, sla, chlorophyll, amass, num_lvs, and num_phylls.
 
 e.  Visualization of relationships between variables (not correlation)
-    with an accompanying caption and discussion (caption: 1-3 sentences,
-    discussion: 1-3 sentences)
+    with an accompanying caption and discussion
 
 Discussion: After visualizing the relationships between each pair of
 variables, the ggpair function reveals the different relationships
@@ -203,8 +201,9 @@ scatterplot matrix that displays scatterplots of each pair of numeric
 values, while also displaying pearson's r on the right and the variable
 distribution on the diagonal.
 
-Starting Regression here: 
-f. Creating the null and full model with accompanying discussion (1-3 sentences)
+Starting Regression here:
+
+f\. Creating the null and full model with accompanying discussion
 
 To determine how species and physiological characteristics perditc
 biomass, we fit multiple linear models. The null model creates a
@@ -219,7 +218,7 @@ full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num_lvs +
 ```
 
 g.  Visual and statistical assumption checks for the full model with
-    accompanying discussion (1-3 sentences)
+    accompanying discussion
 
 We visually assesed normaility and homoskedascitity using diagnostic
 plots for the full model and found that the data is appears normal, but
@@ -239,14 +238,15 @@ check_normality(full)
 check_heteroscedasticity(full)
 ```
 
-h.  Explanation of any transformation and justification (1-3 sentences)
+h.  Explanation of any transformation and justification
 
 After visually assesing normaility and homoscedascitity using diagnostic
 plots for the full model, we found that the data appeared to be
 non-normal and heteroscedasitic. In order to reduce the skewness of
-variable of interest and achieve normality, we applied a log transformation. Once we did this
-we were able to manipulate the residuals in a manner that reported
-normal distribution and homoscedastic variance.
+variable of interest and achieve normality, we applied a log
+transformation. Once we did this we were able to manipulate the
+residuals in a manner that reported normal distribution and
+homoscedastic variance.
 
 ```{r log transformation}
 null_log <- lm(log(totmass)~1, data = plant_subset)
@@ -258,13 +258,22 @@ check_heteroscedasticity(full_log)
 ```
 
 i.  Model construction with visual and statistical assumption checks for
-    three additional models with justification (i.e. why did you choose
-    those predictor variables?) (justification: 1-3 sentences per model)
+    three additional models with justification
 
 To address the question, what set of predictor variables best explains
 the response, we applied three more linear models using the predictor
-variables species, feedlevel, and num_lvs. The species variable was chosen as a predictor variable because it is probable that different species have different biomasses. The model comparing species as predictor variable and totmass as the response variable was found to
-be normal and homoscedastic. The feedlevel variable was chosen as a predictor variable because different feed levels are associated with different nutrient level. Different nutrient levels are indicative of growth and overall health which contributes to individual's biomass. The num_lvs variable was chosen as a predictor variable because the more leaves an individual has, the more biomass an individual has. The models comparing feedlevel and num_lvs to predict totmass, respectively, both were found to be non-normal, yet homoscedastic. 
+variables species, feedlevel, and num_lvs. The species variable was
+chosen as a predictor variable because it is probable that different
+species have different biomasses. The model comparing species as
+predictor variable and totmass as the response variable was found to be
+normal and homoscedastic. The feedlevel variable was chosen as a
+predictor variable because different feed levels are associated with
+different nutrient level. Different nutrient levels are indicative of
+growth and overall health which contributes to individual's biomass. The
+num_lvs variable was chosen as a predictor variable because the more
+leaves an individual has, the more biomass an individual has. The models
+comparing feedlevel and num_lvs to predict totmass, respectively, both
+were found to be non-normal, yet homoscedastic.
 
 Model with predictor variable: species
 
@@ -343,26 +352,30 @@ MuMIn::model.sel(full_log, model2_log, model3_log, model4_log, null_log)
 We compared models using AIC and chose the model with the lowest value,
 which was full_log model.
 
-#Results
+# Results
 
-a.  We found that the full_log model including species, feedlevel, sla,
-    chlorophyll, amass, num_lvs, and num_phylls predictors best
-    predicted totmass because the full_log model yields the lowest AIC
-    value indicating that this model has the best predictive capacity
-    while remaining as simple as possible. Overall, the full_log model
-    was statistically significant (R\^2= 0.8687, F(15, 87)= 38.38,
-    p\<0.001).
-
-b.  With all else held constant, the full_log model indicates a
-    significant relationship between totmass and num_lvs (p\< 0.001).
-    Comparing to the alabamensis species of pitcher plants, the
-    leucophylla species are likely to have a biomass that is 1.7 higher
-    (95% confidence level, \[1.25, 2.16\]) and the psittacina species
-    are likely to have a biomass that is 1.6 lower (95% confidence
-    level, \[-2.05,-1.23\]). However it was found that some of the
-    predictors such as, the jonesii and purpurea species, amass, and
-    num_phylls, did not significantly predict totmass (p= 0.107, p=
-    0.155, p= 0.436, p= 0.446, respectively).
+We found that the full_log model including species, feedlevel, sla,
+chlorophyll, amass, num_lvs, and num_phylls predictors best predicted
+totmass because the full_log model yields the lowest AIC value
+indicating that this model has the best predictive capacity while
+remaining as simple as possible. Overall, the full_log model was
+statistically significant (R\^2= 0.8687, F(15, 87)= 38.38, p\<0.001).
+With all else held constant, the full_log model indicates a significant
+relationship between totmass and num_lvs (p\< 0.001). Comparing to the
+alabamensis species of pitcher plants, the leucophylla species are
+likely to have a biomass that is 1.7 higher (95% confidence level,
+\[1.25, 2.16\]) and the psittacina species are likely to have a biomass
+that is 1.6 lower (95% confidence level, \[-2.05,-1.23\]). However it
+was found that some of the predictors such as, the jonesii and purpurea
+species, amass, and num_phylls, did not significantly predict totmass
+(p= 0.107, p=0.155, p= 0.436, p= 0.446, respectively). In conclusion,
+our model highlights that variables such as number of leaves, feed
+level, specific leaf area, chlorophyll, and specific species type (lata,
+flava, leucophylla, minor, psittacina, rosea, and rubra) are all
+significant variables in predicting the biomass of one individual pitch
+plant. Focusing on the number of leaves, individuals producing more
+pitchers and phyllodes will predictably accumulate more biomass than
+individuals who produce less pitches and phyllodes.
 
 ```{r}
 summary(full_log)
@@ -381,17 +394,20 @@ plot(ggpredict(full_log, terms = "num_lvs", back.transform = TRUE), add.data = T
 
 ```
 
+Caption: We used the ggpredicts function to predict biomass from the
+predictor variable num_lvs. We did by computing back transformating the
+predictor variable num_lvs to create an estimate for biomass. We found a
+postive correlation between the predictor variable, num_lvs, and the
+response variable, totmass, indicating that as the number of leaves
+increases, so does biomass.
 
 ```{r}
-#this was already done above
-summary(full_log)
-
 table <- tidy(full_log, conf.int = TRUE) %>% 
     #using mutate to change the pvalue numbers if they are really small
   #using mutate to chnage the estimates, standard error, and t-statistics to round to 4 digits
   mutate(across(estimate:conf.high,~round(.x,digits=4))) %>% 
   mutate(statistic=round(statistic, digits = 1)) %>% 
-  mutate(p.value=case_when(p.value<0.001~"<0.001")) %>%
+  mutate(p.value=case_when(p.value<0.001~"<0.001",.default = as.character(p.value))) %>%
   #fix this
   #make it into a flex table 
   flextable() %>% 
@@ -409,16 +425,21 @@ table <- tidy(full_log, conf.int = TRUE) %>%
 table
 ```
 
-#Works Cited
+# Bibliography
 
-  Cochran-Stafira, D.L. and von Ende, C.N. (1998), INTEGRATING BACTERIA
+Cochran-Stafira, D.L. and von Ende, C.N. (1998), INTEGRATING BACTERIA
 INTO FOOD WEBS: STUDIES WITH SARRACENIA PURPUREA INQUILINES. Ecology,
 79: 880-898.
-https://doi.org/10.1890/0012-9658(1998)079\[0880:IBIFWS\]2.0.CO;2 (Accessed 2023-06-04).
+https://doi.org/10.1890/0012-9658(1998)079\[0880:IBIFWS\]2.0.CO;2
+(Accessed 2023-06-04).
 
-  Ellison, A. and E. Farnsworth. 2021. Effects of Prey Availability on Sarracenia Physiology at Harvard Forest 2005 ver 18. Environmental Data Initiative. https://doi.org/10.6073/pasta/26b22d09279e62fd729ffc35f9ef0174 (Accessed 2023-06-04). 
+Ellison, A. and E. Farnsworth. 2021. Effects of Prey Availability on
+Sarracenia Physiology at Harvard Forest 2005 ver 18. Environmental Data
+Initiative.
+https://doi.org/10.6073/pasta/26b22d09279e62fd729ffc35f9ef0174 (Accessed
+2023-06-04).
 
-  Farnsworth, Elizabeth J., and Aaron M. Ellison. "Prey Availability
+Farnsworth, Elizabeth J., and Aaron M. Ellison. "Prey Availability
 Directly Affects Physiology, Growth, Nutrient Allocation and Scaling
 Relationships among Leaf Traits in 10 Carnivorous Plant Species."
 Journal of Ecology, Vol. 0, No. 0, 2007,
@@ -428,4 +449,4 @@ Horner, John D., Steele, Cross J., Underwood, Christopher A.,
 Lingamfelter, Daniel. "Age-Related Changes in Characteristics and Prey
 Capture of Seasonal Cohorts of Sarracenia alata Pitchers." The American
 Midland Naturalist, Vol. 167, No. 1, 2012,
-https://doi.org/10.1674/0003-0031-167.1.13 (Accessed 2023-06-04). 
+https://doi.org/10.1674/0003-0031-167.1.13 (Accessed 2023-06-04).
